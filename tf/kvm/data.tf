@@ -34,4 +34,13 @@ data "openstack_networking_secgroup_v2" "allow_9090" {
   name = "allow-9090"
 }
 
+# News API runs on port 5000
+# Add new security groups for news recommendation system
+data "openstack_networking_secgroup_v2" "allow_news_api" {
+  name = "allow-5000"  
+}
 
+# Recommendation engine runs on port 5001
+data "openstack_networking_secgroup_v2" "allow_recommendation_engine" {
+  name = "allow-5001" 
+}

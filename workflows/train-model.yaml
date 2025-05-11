@@ -7,6 +7,8 @@ spec:
   arguments:
     parameters:
     - name: endpoint-ip
+    - name: training-params
+      default: "{}"
 
   templates:
   - name: training-and-build
@@ -17,6 +19,8 @@ spec:
             parameters:
             - name: endpoint-ip
               value: "{{workflow.parameters.endpoint-ip}}"
+            - name: training-params
+              value: "{{workflow.parameters.training-params}}"
       - - name: build-container
           template: trigger-build
           arguments:
@@ -29,11 +33,12 @@ spec:
     inputs:
       parameters:
       - name: endpoint-ip
+      - name: training-params
     script:
       image: alpine:3.18
       command: [sh]
       source: |
-
+        # Install curl and jq
         MAX_RETRIES=5
         RETRY_DELAY=3
         i=1
@@ -64,13 +69,17 @@ spec:
           exit 1
         fi
 
-        # Trigger model training
-        echo "[INFO] Triggering model training..." >&2
-        RESPONSE=$(curl -f -s -X POST http://{{inputs.parameters.endpoint-ip}}:9090/trigger-training)
+        # Trigger model training with parameters
+        echo "[INFO] Triggering news recommendation model training..." >&2
+        echo "[INFO] Training parameters: {{inputs.parameters.training-params}}" >&2
+        
+        RESPONSE=$(curl -f -s -X POST \
+          -H "Content-Type: application/json" \
+          -d '{{inputs.parameters.training-params}}' \
+          http://{{inputs.parameters.endpoint-ip}}:9090/trigger-training)
         CURL_EXIT_CODE=$?
 
         echo "[INFO] Training endpoint response was: $RESPONSE" >&2
-
 
         if [ $CURL_EXIT_CODE -ne 0 ]; then
           echo "[ERROR] curl failed with code $CURL_EXIT_CODE" >&2

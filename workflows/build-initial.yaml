@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: kaniko-pvc-build-
+  generateName: initial-build-
 spec:
   entrypoint: kaniko-build-flow
   volumeClaimTemplates:
@@ -32,7 +32,7 @@ spec:
 
           while [ $i -le $MAX_RETRIES ]; do
             echo "Attempt $i of $MAX_RETRIES: Cloning repo..."
-            git clone --branch master https://github.com/teaching-on-testbeds/gourmetgram.git /mnt/workspace && break
+            git clone --branch main https://github.com/YOUR_GITHUB_USERNAME/news-recommendation.git /mnt/workspace && break
             echo "Git clone failed. Retrying in 5 seconds..."
             i=$((i + 1))
             sleep 5
@@ -52,11 +52,10 @@ spec:
       args:
         - --dockerfile=/mnt/workspace/Dockerfile
         - --context=/mnt/workspace
-        - --destination=registry.kube-system.svc.cluster.local:5000/gourmetgram-app:staging-1.0.0
-        - --destination=registry.kube-system.svc.cluster.local:5000/gourmetgram-app:canary-1.0.0
-        - --destination=registry.kube-system.svc.cluster.local:5000/gourmetgram-app:production-1.0.0
+        - --destination=registry.kube-system.svc.cluster.local:5000/news-recommendation-app:staging-1.0.0
+        - --destination=registry.kube-system.svc.cluster.local:5000/news-recommendation-app:canary-1.0.0
+        - --destination=registry.kube-system.svc.cluster.local:5000/news-recommendation-app:production-1.0.0
         - --insecure
       volumeMounts:
         - name: workdir
           mountPath: /mnt/workspace
-

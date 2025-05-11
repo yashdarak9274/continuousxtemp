@@ -9,13 +9,13 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 10Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: gourmetgram-platform
+  namespace: news-recommendation-platform
 spec:
   replicas: 1
   selector:
