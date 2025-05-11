@@ -1,6 +1,6 @@
 ---
-- name: Post-Install kubectl Setup
-  hosts: node1,node2
+- name: Setup Kubernetes Dashboard
+  hosts: node1
   become: yes
   vars:
     ansible_user: cc
@@ -30,6 +30,17 @@
     - name: Show kubectl get nodes output
       debug:
         msg: "{{ kubectl_output.stdout_lines }}"
+
+    - name: Create news recommender namespaces
+      shell: |
+        kubectl create namespace news-recommender-staging
+        kubectl create namespace news-recommender-canary
+        kubectl create namespace news-recommender-production
+      args:
+        executable: /bin/bash
+      register: namespaces_result
+      failed_when: namespaces_result.rc != 0 and "AlreadyExists" not in namespaces_result.stderr
+      
 
 - name: Add User to Docker Group
   hosts: node1,node2,node3
