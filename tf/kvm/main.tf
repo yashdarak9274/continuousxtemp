@@ -10,7 +10,6 @@ resource "openstack_networking_subnet_v2" "private_subnet" {
   no_gateway = true
 }
 
-# Update ports with new naming convention
 resource "openstack_networking_port_v2" "private_net_ports" {
   for_each              = var.nodes
   name                  = "port-${each.key}-news-recommendation-${var.suffix}"
@@ -43,10 +42,8 @@ resource "openstack_networking_port_v2" "sharednet2_ports" {
 
 resource "openstack_compute_instance_v2" "nodes" {
   for_each = var.nodes
-
   name        = "${each.key}-news-recommendation-${var.suffix}"
   image_name  = "CC-Ubuntu24.04"
-  # Consider using a larger flavor for recommendation engine nodes
   flavor_name = each.key == "node1" ? "m1.large" : "m1.medium"
   key_pair    = var.key
 
