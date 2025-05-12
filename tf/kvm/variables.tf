@@ -1,13 +1,14 @@
 variable "suffix" {
-  description = "Suffix for resource names (use net ID)"
+  description = "Suffix to append to resource names (in our case, the group number)"
   type        = string
   nullable    = false
+  default     = "_50"
 }
 
 variable "key" {
   description = "Name of key pair"
   type        = string
-  default     = "id_rsa_chameleon"
+  default     = "key_group50"
 }
 
 # Updated node configuration for news recommendation system
